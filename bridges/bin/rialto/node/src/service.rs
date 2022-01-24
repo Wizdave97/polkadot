@@ -686,14 +686,18 @@ where
 	let keystore_opt =
 		if role.is_authority() { Some(keystore_container.sync_keystore()) } else { None };
 
+	let beefy_protocol_name = beefy_gadget::protocol_standard_name(
+			&client.block_hash(0).ok().flatten().expect("Genesis block exists; qed"),
+			&config.chain_spec,
+		);
 	let beefy_params = beefy_gadget::BeefyParams {
 		client: client.clone(),
 		backend: backend.clone(),
 		key_store: keystore_opt.clone(),
 		network: network.clone(),
 		signed_commitment_sender,
-		min_block_delta: 2,
 		prometheus_registry: prometheus_registry.clone(),
+		protocol_name: beefy_protocol_name
 	};
 
 	// Start the BEEFY bridge gadget.

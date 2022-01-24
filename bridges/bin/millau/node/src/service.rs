@@ -369,14 +369,18 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
 	let keystore =
 		if role.is_authority() { Some(keystore_container.sync_keystore()) } else { None };
 
+	let beefy_protocol_name = beefy_gadget::protocol_standard_name(
+			&client.block_hash(0).ok().flatten().expect("Genesis block exists; qed"),
+			&config.chain_spec,
+		);
 	let beefy_params = beefy_gadget::BeefyParams {
 		client,
 		backend,
 		key_store: keystore.clone(),
 		network: network.clone(),
 		signed_commitment_sender,
-		min_block_delta: 4,
 		prometheus_registry: prometheus_registry.clone(),
+		protocol_name: beefy_protocol_name
 	};
 
 	// Start the BEEFY bridge gadget.
