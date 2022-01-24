@@ -299,6 +299,11 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
 		})
 	};
 
+	let beefy_protocol_name = beefy_gadget::protocol_standard_name(
+		&client.block_hash(0).ok().flatten().expect("Genesis block exists; qed"),
+		&config.chain_spec,
+	);
+
 	let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		network: network.clone(),
 		client: client.clone(),
@@ -369,10 +374,7 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
 	let keystore =
 		if role.is_authority() { Some(keystore_container.sync_keystore()) } else { None };
 
-	let beefy_protocol_name = beefy_gadget::protocol_standard_name(
-			&client.block_hash(0).ok().flatten().expect("Genesis block exists; qed"),
-			&config.chain_spec,
-		);
+
 	let beefy_params = beefy_gadget::BeefyParams {
 		client,
 		backend,
